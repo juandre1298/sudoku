@@ -1,16 +1,12 @@
 import { useState, useEffect } from "react";
+import type { CellI } from "../types/types";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
-interface Cell {
-    answer: number;
-    default: number;
-    active: boolean;
-    set: number;
-}
+
 const useSudoku = () =>{
     const [loading, setLoading] = useState<boolean>(false);
-    const [game, setGame] = useState<Cell[][]>([]);
+    const [game, setGame] = useState<CellI[][]>([]);
     const [error, setError] = useState('');
 
     useEffect(()=>{
@@ -25,12 +21,15 @@ const useSudoku = () =>{
             try{
                 const ans = await fetch(API_URL, options)
                 const data = await ans.json()
-                const seedGame = data.solution.map((row:Cell[], i:number) =>(row.map((cell:Cell, j:number) =>{
+                const seedGame = data.solution.map((row:CellI[], i:number) =>(row.map((cell:CellI, j:number) =>{
                     return {
                         answer: cell,
                         default: data.puzzle[i][j],
                         set: data.puzzle[i][j],
-                        active: false
+                        status: null,
+                        coordinateI: i,
+                        coordinateJ: j,
+                        sector: [Math.trunc(i/3),Math.trunc(j/3)]
                     }
                 })))
                 setGame(seedGame)
@@ -45,7 +44,14 @@ const useSudoku = () =>{
 
         getSudoku();
     },[])
-    return {loading, game, error}
+
+
+    const updateCell = (i:number,j:number,cell:CellI)=>{
+        const currentGame = [...game]
+        currentGame[i][j] = cell
+        setGame(currentGame)
+    }
+    return {loading, game, error, updateCell, setGame}
 } 
 
 export default useSudoku;
