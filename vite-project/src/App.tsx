@@ -41,34 +41,48 @@ function App() {
 
   const handleSetValue = (e: { target: { value: string; }; }) =>{
     if(!selectedCell) return;
-    const newVal = parseInt(e.target.value);
-
-    if(newVal > 9 || newVal < 0 || isNaN(newVal)){
-      alert('invalid value')
-      return;
-    }
 
     const i = selectedCell.coordinateI;
     const j = selectedCell.coordinateJ;
+    
+    if(!e.target.value){
+      const newCell = game[i][j]
+      newCell.set = null
+      updateCell(i,j,newCell)
+      return
+    } 
+
+    const newVal = parseInt(e.target.value);
+    
+    if(!newVal) return;
+    
+    if(newVal > 9 || newVal < 0 || isNaN(newVal )){
+      alert('invalid value')
+      e.target.value = '';
+      return;
+    }
+
   
     // check row
     const row = game[i].map(c => c.set);
     if(row.includes(newVal)){
       alert('no! row')
+      e.target.value = '';
       return 
     }
     // check col
     const col = game.map(r => r[j].set);
     if(col.includes(newVal)){
       alert('no! col')
+      e.target.value = '';
       return 
     }
-    // check cuadrant
+    // check sector
     const selectedSector = String(game[i][j].sector);
     const sector = game.flat().filter(cell => String(cell.sector) == selectedSector).map(c => c.set);
-    console.log(sector, selectedSector)
     if(sector.includes(newVal)){
       alert('no! sector')
+      e.target.value = '';
       return 
     }    
     // update value
@@ -94,12 +108,19 @@ function App() {
                   id={`[${i},${j}]`} 
                   key={`[${i},${j}]`} 
                   className={`w-[50px] h-[50px] border flex justify-center items-center ${j%3 == 0 ? 'border-l' : ''} 
-                  ${cell.status === 'target' ? 'bg-yellow-600' : ''}
+                  ${cell.status === 'target' ? 'bg-yellow-600 text-sky-800' : ''}
                   ${cell.status === 'focus' ? 'bg-yellow-900' : ''}
+                  ${cell.default ? 'font-extrabold' : 'text-sky-500 border-white'}
+                  
                   `} 
                   onClick={()=>handleSelect(i,j)}>
-                  { !cell.default && cell.status === 'target'  ? (
-                    <input className='w-full h-full flex justify-center items-center text-center' autoFocus onChange={handleSetValue}/>
+                  { !cell.default && cell.status === 'target' ? (
+                    <input 
+                      className='w-full h-full flex justify-center items-center text-center' 
+                      onChange={handleSetValue}
+                      value={ cell.set ? String(cell.set) : ''}
+                      autoFocus 
+                    />
                   ) : (
                   <>{cell.set}</>
                   )}
