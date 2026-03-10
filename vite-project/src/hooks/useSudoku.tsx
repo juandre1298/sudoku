@@ -22,6 +22,7 @@ const useSudoku = () =>{
                 const ans = await fetch(API_URL, options)
                 const data = await ans.json()
                 const seedGame = data.solution.map((row:CellI[], i:number) =>(row.map((cell:CellI, j:number) =>{
+                    console.log(data.puzzle[i][j])
                     return {
                         answer: cell,
                         default: data.puzzle[i][j],

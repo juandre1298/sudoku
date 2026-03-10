@@ -2,9 +2,9 @@ export type cellStatus = 'focus' | 'target' | null
 
 export interface CellI {
     answer: number;
-    default: number;
+    default: number | null;
+    set: number | null;
     status: cellStatus;
-    set: number;
     coordinateI: number;
     coordinateJ: number;
     sector: number[];

@@ -71,11 +71,16 @@ function App() {
       alert('no! sector')
       return 
     }    
+    // update value
     const newCell = game[i][j]
     newCell.set = newVal
     updateCell(i,j,newCell)
-  }
 
+    // check if won
+    if(!game.flat().map(c => c.set).includes(null)){
+      alert('you won!') 
+    }
+  }
 
 
   return (
