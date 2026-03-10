@@ -1,14 +1,13 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
+import useSudoku from './hooks/useSudoku'
 function App() {
-  const [count, setCount] = useState(0)
-
+  const { loading, game, error } = useSudoku();
+  if(loading)<div>'loading...'</div>
   return (
     <>
-      <h1>Hi</h1>
+      {game.length > 0 ? <div>{game.map(row=>(
+        row.map( cell => (<div>{cell.default}</div>))
+      ))}</div>  : <h1>not found</h1>}
     </>
   )
 }
